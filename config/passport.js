@@ -1,4 +1,7 @@
 var LocalStrategy = require('passport-local');
+var TwitterStrategy = require('passport-twitter');
+
+var configAuth = require('./auth');
 
 var User = require('../models/user');
 
@@ -112,6 +115,55 @@ module.exports = function(passport) {
         return done(null, user);
       });
     });
-  }));
+  
+  
+  
+  
+  
+  
+  //twitter auth
+passport.use(new TwitterStrategy({
+	consumerKey: configAuth.twitterAuth.consumerKey,
+	consumerSecret: configAuth.twitterAuth.consumerSecret,
+	callbackUrl: configAuth.twitterAuth.callbackUrl
+	}, function(token, tokenSecret, profile, done){
+
+		process.nextTick(function(){
+
+		User.findOne({ 'twitter.id': profile.id }, function(err, user){
+
+		// Database error
+		if (err) { return done(err); }
+
+// Found a user with this ID, they already have an account on this site.
+// Return this user.
+if (user) {
+return done(null, user);
+}
+
+// User not found - they do not have an account with this site yet.
+// Create a new user, and return it.
+
+var newUser = new User();
+newUser.twitter.id = profile.id;
+newUser.twitter.token = token;
+newUser.twitter.username = profile.username;
+newUser.twitter.displayName = profile.displayName;
+
+newUser.save(function(err){
+if (err) { return done(err); }
+return done(null, newUser);
+});
+});
+});
+}));
+  
+  
+  
+  
+  
+  
+  }));// end of passport callback?
 
 };
+

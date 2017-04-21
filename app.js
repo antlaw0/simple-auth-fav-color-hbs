@@ -28,8 +28,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var mongo_pw = process.env.MONGO_PW;
-var url = 'mongodb://admin:' + mongo_pw + '@localhost:27017/secret?authSource=admin';
-var session_url = 'mongodb://admin:' + mongo_pw + '@localhost:27017/secret_sessions?authSource=admin';
+//var url = 'mongodb://admin:' + mongo_pw + '@localhost:27017/secret?authSource=admin';
+//var session_url = 'mongodb://admin:' + mongo_pw + '@localhost:27017/secret_sessions?authSource=admin';
+var url = 'mongodb://localhost:27017/AuthSource';
+var session_url = 'mongodb://localhost:27017/AuthSource';
 
 
 app.use(session({

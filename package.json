@@ -15,10 +15,13 @@
     "express-flash": "0.0.2",
     "express-session": "^1.15.1",
     "hbs": "~4.0.1",
-    "mongoose": "^4.8.6",
+    "install": "^0.8.8",
+    "mongoose": "^4.9.5",
     "morgan": "~1.7.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "serve-favicon": "~2.3.2"
+    "passport-twitter": "^1.0.4",
+    "serve-favicon": "~2.3.2",
+    "session": "^0.1.0"
   }
 }
