@@ -7,33 +7,33 @@ var User = require('../models/user');
 
 /*
 
- Note the done() method, which has various signatures.
+Note the done() method, which has various signatures.
 
- done(app_err, user_err_or_success, messages);
- done(err);
+done(app_err, user_err_or_success, messages);
+done(err);
 
- means there's been a DB or app error - this is not typical.
- Use to indicates issue with DB or infrastructure or something YOU need to fix.
+means there's been a DB or app error - this is not typical.
+Use to indicates issue with DB or infrastructure or something YOU need to fix.
 
- done(null, false);
- first parameter is for app error - it's null because this is a *user* error.
- Second parameter is false to indicate USER error in login. e.g. wrong password,
- wrong username, trying to sign up with username that already exists...
- Very common issue, your app will decide how to deal with this.
+done(null, false);
+first parameter is for app error - it's null because this is a *user* error.
+Second parameter is false to indicate USER error in login. e.g. wrong password,
+wrong username, trying to sign up with username that already exists...
+Very common issue, your app will decide how to deal with this.
 
- done(null, false, msg);
- As before, plus msg parameter to provide error message that app may display to user
+done(null, false, msg);
+As before, plus msg parameter to provide error message that app may display to user
 
- done(null, user);
- Success! null=no app error,
- user = new user object created, or authenticated user object
+done(null, user);
+Success! null=no app error,
+user = new user object created, or authenticated user object
 
- done(null, user, msg);
- Variation of the previous call. null=no app error,
- user = new user or authenticated user object,
- msg=messages for app to display to user
+done(null, user, msg);
+Variation of the previous call. null=no app error,
+user = new user or authenticated user object,
+msg=messages for app to display to user
 
- */
+*/
 
 
 
@@ -42,7 +42,7 @@ module.exports = function(passport) {
   /* serializeUser and desrializeUser are related to passport's session setup.
   These provide the ability to serialize the user (save to db)
   and deserialize user (fetch from DB)
-   */
+  */
 
   passport.serializeUser(function(user, done){
     done(null, user.id);
@@ -115,55 +115,44 @@ module.exports = function(passport) {
         return done(null, user);
       });
     });
-  
-  
-  
-  
-  
-  
+  }));   ///End of passport.use('local-login' ... )
+
+
   //twitter auth
-passport.use(new TwitterStrategy({
-	consumerKey: configAuth.twitterAuth.consumerKey,
-	consumerSecret: configAuth.twitterAuth.consumerSecret,
-	callbackUrl: configAuth.twitterAuth.callbackUrl
-	}, function(token, tokenSecret, profile, done){
+  passport.use(new TwitterStrategy({
+    consumerKey: configAuth.twitterAuth.consumerKey,
+    consumerSecret: configAuth.twitterAuth.consumerSecret,
+    callbackUrl: configAuth.twitterAuth.callbackUrl
+  }, function(token, tokenSecret, profile, done){
 
-		process.nextTick(function(){
+    process.nextTick(function(){
 
-		User.findOne({ 'twitter.id': profile.id }, function(err, user){
+      User.findOne({ 'twitter.id': profile.id }, function(err, user){
 
-		// Database error
-		if (err) { return done(err); }
+        // Database error
+        if (err) { return done(err); }
 
-// Found a user with this ID, they already have an account on this site.
-// Return this user.
-if (user) {
-return done(null, user);
-}
+        // Found a user with this ID, they already have an account on this site.
+        // Return this user.
+        if (user) {
+          return done(null, user);
+        }
 
-// User not found - they do not have an account with this site yet.
-// Create a new user, and return it.
+        // User not found - they do not have an account with this site yet.
+        // Create a new user, and return it.
 
-var newUser = new User();
-newUser.twitter.id = profile.id;
-newUser.twitter.token = token;
-newUser.twitter.username = profile.username;
-newUser.twitter.displayName = profile.displayName;
+        var newUser = new User();
+        newUser.twitter.id = profile.id;
+        newUser.twitter.token = token;
+        newUser.twitter.username = profile.username;
+        newUser.twitter.displayName = profile.displayName;
 
-newUser.save(function(err){
-if (err) { return done(err); }
-return done(null, newUser);
-});
-});
-});
-}));
-  
-  
-  
-  
-  
-  
-  }));// end of passport callback?
+        newUser.save(function(err){
+          if (err) { return done(err); }
+          return done(null, newUser);
+        });
+      });
+    });
+  }));// End of passport.use(TwitterStrategy) callback?
 
 };
-
